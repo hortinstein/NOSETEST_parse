@@ -2,3 +2,7 @@
 
 # NOSETEST_parse
 parser for nose test curriculum
+
+```
+rm -rf student_instructor_src/ && python3 LATTEPREP.py instructor_src/
+```
