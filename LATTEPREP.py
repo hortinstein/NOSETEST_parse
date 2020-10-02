@@ -51,14 +51,15 @@ for root, subdirs, files in os.walk(walk_dir):
             if ".py" in filename:
                 if "#!CUT_END" in line: 
                     CUT = False
-                    solution_dict[file_path] += "\n```"
+                    solution_dict[file_path] += '```\n{}//END CODE HERE\n'.format(startwhites)
+                    
                     print('{}#END CODE HERE\n'.format(startwhites), end='')
                 elif CUT == True:
                     solution_dict[file_path] += "\n {} {}".format(fileinput.filelineno(),line) 
                     print('{}\n'.format(startwhites), end='')
                 elif "#!CUT_START" in line: 
                     CUT = True
-                    solution_dict[file_path] += "\n```"
+                    solution_dict[file_path] += '```\n{}#START CODE HERE\n'.format(startwhites)
                     print('{}#START CODE HERE\n'.format(startwhites), end='')
                 elif "#!COMMENT" in line:
                     solution_dict[file_path] += "\n {} {}".format(fileinput.filelineno(),line) 
@@ -70,16 +71,23 @@ for root, subdirs, files in os.walk(walk_dir):
                 if "//!CUT_END" in line: 
                     CUT = False
                     solution_dict[file_path] += "\n```"
-                    print('{}//END CODE HERE\n'.format(startwhites), end='')
+                    solution_dict[file_path] += '```\n{}//START CODE HERE\n'.format(startwhites)
                 elif CUT == True:
                     solution_dict[file_path] += "\n {} {}".format(fileinput.filelineno(),line) 
                     print('{}\n'.format(startwhites), end='')
                 elif "//!CUT_START" in line: 
                     CUT = True
-                    solution_dict[file_path] += "\n```"
+                    solution_dict[file_path] += '```\n{}//START CODE HERE\n'.format(startwhites)
                     print('{}//START CODE HERE\n'.format(startwhites), end='')
                 elif "//!COMMENT" in line:
                     solution_dict[file_path] += "\n {} {}".format(fileinput.filelineno(),line) 
                     print('{}'.format(line.replace("//!COMMENT","//")), end='')
                 else:
                     print('{}'.format(line), end='') 
+
+f = open("{}/solution.MD", "W")
+for item in solution_dict:
+
+    f.write("## {}\n".format(item))
+    f.write(solution_dict[item])
+f.close()
