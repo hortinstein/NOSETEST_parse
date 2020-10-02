@@ -45,20 +45,41 @@ for root, subdirs, files in os.walk(walk_dir):
         CUT = False
         solution_dict[file_path] = ""
         for line in fileinput.input(file_path, inplace=True):
-            if CUT == True:
-                solution_dict[file_path] += "\n {} {}".format(fileinput.filelineno(),line) 
-                print('{}'.format(line), end='')
-            if "#!START_CUT" in line: 
-                CUT = True
-                solution_dict[file_path] += "\n```"
-                print('#START CODE HERE', end='')
-            elif "#!END_CUT" in line: 
-                CUT = False
-                solution_dict[file_path] += "\n```"
-                print('#END CODE HERE', end='')
-            elif "#!COMMENT" in line:
-                solution_dict[file_path] += "\n {} {}".format(fileinput.filelineno(),line) 
-                print('# {}'.format(line), end='')
-
-            print('{} {}'.format(fileinput.filelineno(), line), end='') # for Python 3
-
+            #preserve leading whitespace
+            startwhites = line[:len(line)-len(line.lstrip())]
+            #PYTHON
+            if ".py" in filename:
+                if "#!CUT_END" in line: 
+                    CUT = False
+                    solution_dict[file_path] += "\n```"
+                    print('{}#END CODE HERE\n'.format(startwhites), end='')
+                elif CUT == True:
+                    solution_dict[file_path] += "\n {} {}".format(fileinput.filelineno(),line) 
+                    print('{}\n'.format(startwhites), end='')
+                elif "#!CUT_START" in line: 
+                    CUT = True
+                    solution_dict[file_path] += "\n```"
+                    print('{}#START CODE HERE\n'.format(startwhites), end='')
+                elif "#!COMMENT" in line:
+                    solution_dict[file_path] += "\n {} {}".format(fileinput.filelineno(),line) 
+                    print('{}'.format(line.replace("#!COMMENT","#")), end='')
+                else:
+                    print('{}'.format(line), end='') 
+            #C and C++ 
+            if (".c" in filename) or (".cpp" in filename):
+                if "//!CUT_END" in line: 
+                    CUT = False
+                    solution_dict[file_path] += "\n```"
+                    print('{}//END CODE HERE\n'.format(startwhites), end='')
+                elif CUT == True:
+                    solution_dict[file_path] += "\n {} {}".format(fileinput.filelineno(),line) 
+                    print('{}\n'.format(startwhites), end='')
+                elif "//!CUT_START" in line: 
+                    CUT = True
+                    solution_dict[file_path] += "\n```"
+                    print('{}//START CODE HERE\n'.format(startwhites), end='')
+                elif "//!COMMENT" in line:
+                    solution_dict[file_path] += "\n {} {}".format(fileinput.filelineno(),line) 
+                    print('{}'.format(line.replace("//!COMMENT","//")), end='')
+                else:
+                    print('{}'.format(line), end='') 
