@@ -42,20 +42,23 @@ for root, subdirs, files in os.walk(walk_dir):
         if ("__pycache__" in file_path):
             continue
         print('\t- file %s (full path: %s)' % (filename, file_path))
-        CUT = FALSE
+        CUT = False
         solution_dict[file_path] = ""
         for line in fileinput.input(file_path, inplace=True):
-            if "#!START_CUT" or "//!START_CUT" in line: 
+            if CUT == True:
+                solution_dict[file_path] += "\n {} {}".format(fileinput.filelineno(),line) 
+                print('{}'.format(line), end='')
+            if "#!START_CUT" in line: 
                 CUT = True
                 solution_dict[file_path] += "\n```"
-                print('', end='')
-            elif "#!END_CUT" or "//!END_CUT" in line: 
+                print('#START CODE HERE', end='')
+            elif "#!END_CUT" in line: 
                 CUT = False
                 solution_dict[file_path] += "\n```"
-                print('', end='')
+                print('#END CODE HERE', end='')
             elif "#!COMMENT" in line:
-                solution_dict[file_path] += "\n```"
-                print('', end='')
+                solution_dict[file_path] += "\n {} {}".format(fileinput.filelineno(),line) 
+                print('# {}'.format(line), end='')
 
             print('{} {}'.format(fileinput.filelineno(), line), end='') # for Python 3
 
