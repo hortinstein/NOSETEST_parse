@@ -20,6 +20,8 @@ old_dir = sys.argv[1]
 walk_dir = "student_"+old_dir
 copyanything(old_dir,walk_dir)
 
+solution_dict = {}
+
 print('walk_dir = ' + walk_dir)
 
 # If your current working directory may change during script execution, it's recommended to
@@ -40,13 +42,20 @@ for root, subdirs, files in os.walk(walk_dir):
         if ("__pycache__" in file_path):
             continue
         print('\t- file %s (full path: %s)' % (filename, file_path))
+        CUT = FALSE
+        solution_dict[file_path] = ""
         for line in fileinput.input(file_path, inplace=True):
+            if "#!START_CUT" or "//!START_CUT" in line: 
+                CUT = True
+                solution_dict[file_path] += "\n```"
+                print('', end='')
+            elif "#!END_CUT" or "//!END_CUT" in line: 
+                CUT = False
+                solution_dict[file_path] += "\n```"
+                print('', end='')
+            elif "#!COMMENT" in line:
+                solution_dict[file_path] += "\n```"
+                print('', end='')
+
             print('{} {}'.format(fileinput.filelineno(), line), end='') # for Python 3
 
-        # with open(file_path, 'rwb') as f:
-        #     f_content = f.read()
-        #     print(fullpath)
-
-            #list_file.write(('The file %s contains:\n' % filename).encode('utf-8'))
-            #list_file.write(f_content)
-            #list_file.write(b'\n')
